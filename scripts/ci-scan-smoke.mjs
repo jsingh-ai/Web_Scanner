@@ -10,7 +10,7 @@ import { chromium } from 'playwright';
 import { classify, scanErrorSignatures } from '../src/scan/checks.js';
 import { classifyReachability } from '../src/scan/reachability.js';
 import { captureApp } from '../src/scan/capture.js';
-import { saveScreenshot } from '../src/storage/screenshots.js';
+import { saveScreenshot, resolveScreenshot } from '../src/storage/screenshots.js';
 
 function assert(cond, msg) {
   if (!cond) throw new Error(`assert failed: ${msg}`);
@@ -85,9 +85,8 @@ try {
   assert(verdict.status === 'good', 'captured good page classifies as good');
 
   const relPath = saveScreenshot(signals.screenshotBuffer, { appId: 1 });
-  assert(relPath.startsWith('data/screenshots/'), 'screenshot path is repo-relative');
-  const absSaved = join(ssDir, relPath.split('/').slice(2).join('/'));
-  assert(existsSync(absSaved), 'screenshot file written to disk');
+  assert(!relPath.startsWith('/') && !relPath.includes('..'), 'screenshot path is root-relative');
+  assert(existsSync(resolveScreenshot(relPath)), 'screenshot file written to disk');
 
   await context.close();
   console.log('SCAN SMOKE PASSED');

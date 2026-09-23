@@ -43,11 +43,13 @@ Windows — before any logic is written.
 - [x] Provider selection + runtime failover + graceful "vision unavailable" (`ai/provider.js`)
 - [x] AI CI smoke (`scripts/ci-ai-smoke.mjs`) — pure logic + fallback paths, no API calls
 
-## Phase 5 — Orchestration
+## Phase 5 — Orchestration  ⬅ current
 
-- [ ] Scan runner (`runner.js`): iterate apps, concurrency, verdict assembly
-- [ ] Single-flight lock, kill-timeout, wall-clock cap
-- [ ] Retention / pruning job
+- [x] Scan runner (`scan/runner.js`): ladder per app, bounded concurrency, wall-clock cap, one browser per batch
+- [x] Scan worker entry point (`src/scan.js`) — short-lived, exits after the run
+- [x] Single-flight lock (`scan/lock.js`, atomic O_EXCL lockfile with stale reclaim)
+- [x] Retention / pruning (`storage/prune.js`); screenshot paths made root-relative
+- [x] End-to-end CI smoke (`scripts/ci-orchestration-smoke.mjs`) against a local server
 
 ## Phase 6 — Dashboard + settings + security
 

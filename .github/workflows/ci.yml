@@ -35,3 +35,6 @@ jobs:
 
       - name: Smoke test (AI judgment)
         run: node scripts/ci-ai-smoke.mjs
+
+      - name: Smoke test (orchestration end-to-end)
+        run: node scripts/ci-orchestration-smoke.mjs
