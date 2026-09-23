@@ -70,7 +70,7 @@ try {
 
   // static serving
   r = await app.inject({ method: 'GET', url: '/' });
-  assert(r.statusCode === 200 && r.payload.includes('Web Scanner'), 'index.html served');
+  assert(r.statusCode === 200 && r.payload.includes('Five Star Sentinel'), 'index.html served');
   r = await app.inject({ method: 'GET', url: '/styles.css' });
   assert(r.statusCode === 200, 'styles.css served');
 

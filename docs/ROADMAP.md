@@ -69,3 +69,14 @@ Windows — before any logic is written.
 - [x] `scripts/install-service.ps1` (NSSM auto-start service)
 - [x] Scheduler CI smoke (`scripts/ci-scheduler-smoke.mjs`) — slot/catch-up logic + registration
 - [x] Final deployment docs pass (in-process schedule, service, env vars)
+
+## Phase 8 — UI polish (premium, customer-facing)  ⬅ current
+
+- [x] Full design system (`public/styles.css`): Five Star blue brand tokens, Inter, shadows/radii
+- [x] Light + dark themes with a persisted toggle (light default)
+- [x] Rebrand to "Five Star Sentinel" with a star/orbit logo mark
+- [x] Overview: overall-health gauge + KPI tiles (total / operational / warnings / down)
+- [x] Toolbar: search + status filter segmented control
+- [x] Refined status cards (status ring, pulse badge, meta chips, breakdown, screenshot lightbox)
+- [x] Settings slide-over drawer, toasts, skeleton loading, empty states
+- [x] Updated server smoke assertion for the new page title
