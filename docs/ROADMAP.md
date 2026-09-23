@@ -18,13 +18,14 @@ before being pulled to the VM. Check items off as phases merge.
 dependencies (better-sqlite3 native binary + Playwright Chromium) install cleanly on
 Windows — before any logic is written.
 
-## Phase 2 — Foundation (data layer)
+## Phase 2 — Foundation (data layer)  ⬅ current
 
-- [ ] SQLite schema + migrations (`db.js`)
-- [ ] App CRUD module (`apps.js`)
-- [ ] Results read/write module (`results.js`)
-- [ ] Switch CI to `npm ci` once the lockfile is committed
-- [ ] Unit-level smoke in CI for the db module
+- [x] SQLite schema + migrations (`db.js`, WAL, `user_version` migrations)
+- [x] App CRUD module (`apps.js`, soft-delete preserves history)
+- [x] Results read/write module (`results.js`, batches/checks/machine_notes, latest + history)
+- [x] Input validation + URL normalization (`util/validate.js`; SSRF guard hook for Phase 6)
+- [x] Committed lockfile; CI switched to `npm ci`
+- [x] Data-layer smoke test in CI (`scripts/ci-db-smoke.mjs`)
 
 ## Phase 3 — Scan engine
 
