@@ -18,6 +18,7 @@ delete process.env.ANTHROPIC_API_KEY;
 delete process.env.OPENAI_API_KEY;
 
 const { buildServer } = await import('../src/server.js');
+const { closeDb } = await import('../src/db/db.js');
 const app = await buildServer();
 const TOK = { 'x-write-token': 'testtoken' };
 
@@ -80,5 +81,10 @@ try {
   console.log('SERVER SMOKE PASSED');
 } finally {
   await app.close();
-  rmSync(work, { recursive: true, force: true });
+  closeDb(); // release the SQLite file handle so Windows can unlink it
+  try {
+    rmSync(work, { recursive: true, force: true });
+  } catch {
+    // best-effort temp cleanup; a leftover lock must not fail CI
+  }
 }
