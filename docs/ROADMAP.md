@@ -35,12 +35,13 @@ Windows — before any logic is written.
 - [x] Screenshot save (`storage/screenshots.js`): JPEG q72, dated folders (WebP deferred — see DECISIONS §6)
 - [x] Scan-engine CI smoke (`scripts/ci-scan-smoke.mjs`)
 
-## Phase 4 — AI judgment
+## Phase 4 — AI judgment  ⬅ current
 
-- [ ] Provider-agnostic `judge()` interface
-- [ ] Anthropic implementation (structured outputs, pinned model)
-- [ ] OpenAI implementation (json_schema)
-- [ ] Escalation logic + runtime fallback + graceful "vision unavailable"
+- [x] Shared prompt + JSON extraction + verdict normalization (`ai/prompt.js`)
+- [x] Anthropic implementation (`ai/anthropic.js`, default `claude-opus-5`, `VISION_MODEL` override)
+- [x] OpenAI implementation (`ai/openai.js`, default `gpt-4o`, `OPENAI_VISION_MODEL` override, json_object mode)
+- [x] Provider selection + runtime failover + graceful "vision unavailable" (`ai/provider.js`)
+- [x] AI CI smoke (`scripts/ci-ai-smoke.mjs`) — pure logic + fallback paths, no API calls
 
 ## Phase 5 — Orchestration
 

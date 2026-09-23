@@ -32,3 +32,6 @@ jobs:
 
       - name: Smoke test (scan engine)
         run: node scripts/ci-scan-smoke.mjs
+
+      - name: Smoke test (AI judgment)
+        run: node scripts/ci-ai-smoke.mjs
