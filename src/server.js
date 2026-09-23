@@ -115,7 +115,7 @@ async function start() {
   try {
     await app.listen({ port, host });
     // eslint-disable-next-line no-console
-    console.log(`Web Scanner dashboard listening on http://${host}:${port}`);
+    console.log(`Five Star Sentinel dashboard listening on http://${host}:${port}`);
     if (!process.env.WRITE_TOKEN) {
       console.warn('WARNING: WRITE_TOKEN is not set — settings mutations are UNPROTECTED.');
     }
