@@ -122,6 +122,16 @@ no auth on a shared network, is a textbook SSRF sink and the rendered app name/U
 a stored-XSS sink. "No login" describes authentication, not a licence to skip these.
 These close the real holes while preserving the frictionless UX the user asked for.
 
+**Update (Phase 6) — SSRF guard allows private LAN, blocks only the real targets.**
+The monitored apps live on the internal network (private IPs), so a blanket
+private-range block would break the tool. The guard (`src/security/ssrf.js`) blocks
+only loopback, link-local + the `169.254.169.254` metadata endpoint, and the
+unspecified address — never legitimate targets — while allowing 10/8, 172.16/12,
+192.168/16 and IPv6 ULA. An optional `SCAN_URL_ALLOWLIST` narrows it further. CSRF is
+covered by requiring a custom header (`x-write-token`) on mutations, which a cross-site
+form cannot set. The "audit log" is a mutation log line (source IP + result) written to
+the service log (captured by NSSM), not a separate store.
+
 ## 9. No frontend build step, no CDN
 
 **Decision:** Static HTML + vanilla ES-module JS + CSS served locally by Fastify.

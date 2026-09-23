@@ -51,12 +51,16 @@ Windows — before any logic is written.
 - [x] Retention / pruning (`storage/prune.js`); screenshot paths made root-relative
 - [x] End-to-end CI smoke (`scripts/ci-orchestration-smoke.mjs`) against a local server
 
-## Phase 6 — Dashboard + settings + security
+## Phase 6 — Dashboard + settings + security  ⬅ current
 
-- [ ] Status page (server-rendered + fetch), section/machine breakdown display
-- [ ] ⚙ settings CRUD UI
-- [ ] Output escaping, write-token + CSRF, SSRF URL guard, LAN bind, audit log
-- [ ] Run-now button
+- [x] Fastify dashboard service (`src/server.js`); serves status page, API, screenshots
+- [x] Status page (`public/`) with status cards + expandable section/machine breakdown
+- [x] ⚙ settings CRUD UI (add/edit/delete apps, write-token field)
+- [x] Output escaping (all data via textContent), write-token + custom-header CSRF guard
+- [x] SSRF URL guard (`security/ssrf.js`) — blocks loopback/link-local/metadata, allows private LAN
+- [x] Audit-log hook (source IP + result on mutations); LAN bind via BIND_HOST
+- [x] Run-now button → spawns the scan worker
+- [x] Server CI smoke (`scripts/ci-server-smoke.mjs`) — API, auth, SSRF, static serving
 
 ## Phase 7 — Scheduling + deployment
 
