@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Web Scanner</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="titles">
+        <h1>Web Scanner</h1>
+        <span id="subtitle" class="subtitle">Loading…</span>
+      </div>
+      <div class="actions">
+        <button id="refreshBtn" class="btn" title="Refresh">Refresh</button>
+        <button id="runNowBtn" class="btn btn-primary" title="Run a scan now">Run now</button>
+        <button id="settingsBtn" class="btn btn-icon" title="Settings" aria-label="Settings">⚙</button>
+      </div>
+    </header>
+
+    <main id="grid" class="grid" aria-live="polite"></main>
+
+    <!-- Settings panel -->
+    <div id="settingsOverlay" class="overlay hidden">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>Settings — Monitored Apps</h2>
+          <button id="settingsClose" class="btn btn-icon" aria-label="Close">✕</button>
+        </div>
+
+        <div class="field token-field">
+          <label for="tokenInput">Write token <span class="hint">(required to add/edit/delete if the server is configured with one)</span></label>
+          <input id="tokenInput" type="password" placeholder="paste write token" autocomplete="off" />
+        </div>
+
+        <form id="appForm" class="app-form">
+          <input type="hidden" id="appId" />
+          <div class="row">
+            <div class="field grow">
+              <label for="name">Name</label>
+              <input id="name" required maxlength="200" placeholder="e.g. OPC Polytex" />
+            </div>
+            <div class="field grow">
+              <label for="url">URL</label>
+              <input id="url" required placeholder="e.g. http://10.0.0.5/dashboard" />
+            </div>
+          </div>
+          <div class="row">
+            <label class="check"><input type="checkbox" id="isRich" /> Rich dashboard (use vision + section breakdown)</label>
+          </div>
+          <div class="row">
+            <div class="field grow">
+              <label for="sections">Sections <span class="hint">(comma-separated, dashboards only)</span></label>
+              <input id="sections" placeholder="Pinch, Lamination, Totani, Bottomer, Extruder" />
+            </div>
+          </div>
+          <details class="advanced">
+            <summary>Advanced load options</summary>
+            <div class="row">
+              <div class="field">
+                <label for="waitStrategy">Wait strategy</label>
+                <select id="waitStrategy">
+                  <option value="load">load (default)</option>
+                  <option value="domcontentloaded">domcontentloaded</option>
+                  <option value="networkidle">networkidle (avoid for live dashboards)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="settleMs">Settle (ms)</label>
+                <input id="settleMs" type="number" min="0" max="120000" placeholder="3000" />
+              </div>
+              <div class="field">
+                <label for="timeoutMs">Timeout (ms)</label>
+                <input id="timeoutMs" type="number" min="1000" max="300000" placeholder="30000" />
+              </div>
+            </div>
+            <div class="row">
+              <div class="field grow">
+                <label for="waitSelector">Readiness selector <span class="hint">(optional CSS selector)</span></label>
+                <input id="waitSelector" placeholder="e.g. .tile, #root .loaded" />
+              </div>
+            </div>
+          </details>
+          <div class="row form-actions">
+            <button type="submit" class="btn btn-primary" id="saveBtn">Add app</button>
+            <button type="button" class="btn" id="cancelEdit">Cancel</button>
+            <span id="formMsg" class="form-msg"></span>
+          </div>
+        </form>
+
+        <div class="apps-list" id="appsList"></div>
+      </div>
+    </div>
+
+    <!-- Screenshot viewer -->
+    <div id="shotOverlay" class="overlay hidden">
+      <div class="shot-panel">
+        <button id="shotClose" class="btn btn-icon" aria-label="Close">✕</button>
+        <img id="shotImg" alt="Screenshot" />
+      </div>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

@@ -38,3 +38,6 @@ jobs:
 
       - name: Smoke test (orchestration end-to-end)
         run: node scripts/ci-orchestration-smoke.mjs
+
+      - name: Smoke test (dashboard server + API + SSRF)
+        run: node scripts/ci-server-smoke.mjs
