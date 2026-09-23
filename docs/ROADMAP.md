@@ -27,12 +27,13 @@ Windows — before any logic is written.
 - [x] Committed lockfile; CI switched to `npm ci`
 - [x] Data-layer smoke test in CI (`scripts/ci-db-smoke.mjs`)
 
-## Phase 3 — Scan engine
+## Phase 3 — Scan engine  ⬅ current
 
-- [ ] Playwright capture (`capture.js`): load + settle + selector wait strategy
-- [ ] Reachability pre-check
-- [ ] Deterministic checks (`checks.js`): HTTP, error keywords, blank-page detection
-- [ ] Screenshot save (WebP, downscaled)
+- [x] Playwright capture (`scan/capture.js`): load + settle + optional selector; never `networkidle` by default
+- [x] Reachability pre-check (`scan/reachability.js`): judged before launching a browser
+- [x] Deterministic checks (`scan/checks.js`): HTTP, error signatures, blank-page, missing-selector
+- [x] Screenshot save (`storage/screenshots.js`): JPEG q72, dated folders (WebP deferred — see DECISIONS §6)
+- [x] Scan-engine CI smoke (`scripts/ci-scan-smoke.mjs`)
 
 ## Phase 4 — AI judgment
 
