@@ -18,9 +18,8 @@ jobs:
           node-version: 22.16.0
 
       - name: Install dependencies
-        # Phase 1 has no committed lockfile yet, so use `npm install`.
-        # Once package-lock.json is committed (Phase 2) this switches to `npm ci`.
-        run: npm install
+        # Lockfile is committed as of Phase 2, so use the strict, reproducible install.
+        run: npm ci
 
       - name: Install Playwright Chromium
         run: npx playwright install chromium
@@ -28,11 +27,5 @@ jobs:
       - name: Smoke test (better-sqlite3 + Chromium)
         run: node scripts/ci-smoke.mjs
 
-      - name: Upload generated lockfile
-        # Lets us commit a real lockfile so later phases can use `npm ci`.
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-lock
-          path: package-lock.json
-          if-no-files-found: warn
+      - name: Smoke test (data layer)
+        run: node scripts/ci-db-smoke.mjs
