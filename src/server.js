@@ -10,7 +10,6 @@
 
 import 'dotenv/config';
 
-import { spawn } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
@@ -23,6 +22,8 @@ import { getAppHistory, getLatestStatuses } from './db/results.js';
 import { getDb } from './db/db.js';
 import { screenshotRoot } from './storage/screenshots.js';
 import { assertUrlAllowed } from './security/ssrf.js';
+import { spawnScan } from './scan/spawnScan.js';
+import { startScheduler } from './scan/scheduler.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const PUBLIC_DIR = join(HERE, '..', 'public');
@@ -100,11 +101,7 @@ export async function buildServer() {
 
   // Run a scan now by spawning the short-lived worker (single-flight lock guards overlap).
   app.post('/api/run-now', { preHandler: requireToken }, async (_req, reply) => {
-    const child = spawn(process.execPath, [join(HERE, 'scan.js'), 'manual'], {
-      detached: true,
-      stdio: 'ignore',
-    });
-    child.unref();
+    spawnScan('manual');
     return reply.code(202).send({ started: true });
   });
 
@@ -122,6 +119,8 @@ async function start() {
     if (!process.env.WRITE_TOKEN) {
       console.warn('WARNING: WRITE_TOKEN is not set — settings mutations are UNPROTECTED.');
     }
+    // Start the in-process scheduler (7am/7pm + startup catch-up).
+    startScheduler();
   } catch (e) {
     console.error('failed to start server:', e);
     process.exit(1);

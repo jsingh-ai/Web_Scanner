@@ -62,8 +62,10 @@ Windows — before any logic is written.
 - [x] Run-now button → spawns the scan worker
 - [x] Server CI smoke (`scripts/ci-server-smoke.mjs`) — API, auth, SSRF, static serving
 
-## Phase 7 — Scheduling + deployment
+## Phase 7 — Scheduling + deployment  ⬅ current
 
-- [ ] node-cron 07:00 / 19:00 + startup catch-up
-- [ ] `scripts/install-service.ps1` (NSSM)
-- [ ] Final deployment docs pass
+- [x] In-process `node-cron` at 07:00 / 19:00 (`scan/scheduler.js`) + startup catch-up
+- [x] Shared `spawnScan()` used by both the scheduler and the Run-now button
+- [x] `scripts/install-service.ps1` (NSSM auto-start service)
+- [x] Scheduler CI smoke (`scripts/ci-scheduler-smoke.mjs`) — slot/catch-up logic + registration
+- [x] Final deployment docs pass (in-process schedule, service, env vars)

@@ -41,3 +41,6 @@ jobs:
 
       - name: Smoke test (dashboard server + API + SSRF)
         run: node scripts/ci-server-smoke.mjs
+
+      - name: Smoke test (scheduler)
+        run: node scripts/ci-scheduler-smoke.mjs
