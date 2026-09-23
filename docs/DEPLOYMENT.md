@@ -57,14 +57,24 @@ node src\scan.js       # run one scan and watch the output
 The dashboard must stay up for teammates and survive reboots. NSSM supervises it.
 
 ```powershell
-# One-time: download nssm.exe from https://nssm.cc and place it (e.g. C:\tools\nssm.exe)
-# Then register the service (a helper script is provided in a later phase):
-.\scripts\install-service.ps1
+# One-time: download nssm.exe from https://nssm.cc (e.g. to C:\tools\nssm.exe).
+# In an ELEVATED PowerShell, from the repo root:
+.\scripts\install-service.ps1                 # if nssm.exe is on PATH
+# or:
+.\scripts\install-service.ps1 -NssmPath C:\tools\nssm.exe
+
+# then start it:
+nssm start WebScannerWeb
 ```
 
-The service is set to auto-start on boot and auto-restart on crash, running with no
-user logged in. The 7am/7pm schedule runs **inside** this service (node-cron), so no
-separate scheduled task is needed for scans.
+The service (`WebScannerWeb`) auto-starts on boot and auto-restarts on crash, running
+with no user logged in. Its stdout/stderr (including the audit log and scan summaries)
+go to `data\logs\`. To remove it later: `nssm remove WebScannerWeb confirm`.
+
+The **7am/7pm scans run in-process** inside this service via node-cron, so there is no
+separate Windows scheduled task. On service start, a **catch-up** scan runs
+automatically if the most recent 7am/7pm slot was missed (e.g. the VM was rebooting).
+Override the times with `MORNING_CRON` / `EVENING_CRON` in `.env` if needed.
 
 ## 6. Network access
 

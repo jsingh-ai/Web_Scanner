@@ -143,6 +143,12 @@ export function listBatches(limit = 50) {
     .all(limit);
 }
 
+/** The most recent batch (by start time), or undefined. Used for startup catch-up. */
+export function getLatestBatch() {
+  const db = getDb();
+  return db.prepare('SELECT * FROM scan_batches ORDER BY started_at DESC, id DESC LIMIT 1').get();
+}
+
 /**
  * Checks whose screenshot is older than `days` and not yet pruned. Used by the
  * Phase 5 retention job to delete the files and flag the rows.
