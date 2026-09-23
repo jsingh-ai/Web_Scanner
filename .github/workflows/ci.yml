@@ -29,3 +29,6 @@ jobs:
 
       - name: Smoke test (data layer)
         run: node scripts/ci-db-smoke.mjs
+
+      - name: Smoke test (scan engine)
+        run: node scripts/ci-scan-smoke.mjs

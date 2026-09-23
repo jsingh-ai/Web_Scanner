@@ -87,12 +87,18 @@ screenshots on disk (pruned at 14 days), referenced by path.
 **Alternatives:** JPEG screenshots; screenshots as BLOBs in the DB; `node:sqlite`.
 
 **Why:** SQLite is a single file with no server — ideal for a locked-down Windows VM.
-WAL lets the dashboard read while a scan writes. WebP is smaller than JPEG at equal
-quality; keeping images on disk (not in the DB) keeps the DB tiny and makes 14-day
-pruning trivial. `node:sqlite` is **not** used as a fallback — in Node 22.16 it is
-experimental/flagged with a different API, so it is not a drop-in. If better-sqlite3
-prebuilds are ever a concern, vendoring the single prebuilt `.node` is the cleaner
-fallback than an API rewrite.
+WAL lets the dashboard read while a scan writes. Keeping images on disk (not in the
+DB) keeps the DB tiny and makes 14-day pruning trivial. `node:sqlite` is **not** used
+as a fallback — in Node 22.16 it is experimental/flagged with a different API, so it
+is not a drop-in. If better-sqlite3 prebuilds are ever a concern, vendoring the single
+prebuilt `.node` is the cleaner fallback than an API rewrite.
+
+**Update (Phase 3) — screenshots are JPEG, not WebP.** Playwright emits PNG/JPEG
+natively but not WebP; producing WebP would require adding `sharp` (another native
+module) purely for a format conversion. At this scale the disk saving is negligible
+(~560 images, well under 1 GB of ~27 GB free), so we use Playwright-native **JPEG
+q72** and avoid the extra dependency and its de-risking. If disk ever gets tight, the
+single, isolated place to add `sharp` + WebP is `src/storage/screenshots.js`.
 
 ## 7. Native-module reliability: prebuilt binary as a hard requirement, verified in CI
 
