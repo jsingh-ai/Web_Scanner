@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Secrets / local config
+.env
+.env.local
+
+# Runtime data (DB + screenshots) — never committed
+data/*
+!data/.gitkeep
+
+# Playwright browser binaries (installed via `npx playwright install`)
+# and misc caches
+.cache/
+*.log
+
+# OS / editor cruft
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/

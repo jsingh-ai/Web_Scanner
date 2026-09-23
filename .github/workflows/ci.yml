@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  windows-install:
+    name: Windows install + native smoke
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22.16 (ABI-match the deploy VM)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+
+      - name: Install dependencies
+        # Phase 1 has no committed lockfile yet, so use `npm install`.
+        # Once package-lock.json is committed (Phase 2) this switches to `npm ci`.
+        run: npm install
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: Smoke test (better-sqlite3 + Chromium)
+        run: node scripts/ci-smoke.mjs
+
+      - name: Upload generated lockfile
+        # Lets us commit a real lockfile so later phases can use `npm ci`.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-lock
+          path: package-lock.json
+          if-no-files-found: warn
