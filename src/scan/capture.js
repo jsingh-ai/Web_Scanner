@@ -11,6 +11,36 @@ function waitUntilFor(strategy) {
   return 'load';
 }
 
+// Adaptive "settle": after load, wait until the page stops visibly changing (DOM node
+// count + visible-text length stable across two checks) or a cap is hit. Rich
+// dashboards get a longer cap since they stream data; simple pages finish in ~1s.
+// Replaces fixed settle timers so no per-app tuning is needed.
+async function smartSettle(page, app) {
+  const cap = app.is_rich_dashboard ? 12000 : 6000;
+  const start = Date.now();
+  await page.waitForTimeout(400); // small base for first paint
+  let last = null;
+  let stable = 0;
+  while (Date.now() - start < cap) {
+    let metric;
+    try {
+      metric = await page.evaluate(
+        () =>
+          `${document.body ? document.body.innerText.length : 0}|${document.getElementsByTagName('*').length}`,
+      );
+    } catch {
+      break;
+    }
+    if (metric === last) {
+      if (++stable >= 2) break;
+    } else {
+      stable = 0;
+      last = metric;
+    }
+    await page.waitForTimeout(500);
+  }
+}
+
 /**
  * Capture signals for one app using an existing browser context.
  * @param {import('playwright').BrowserContext} context
@@ -41,9 +71,7 @@ export async function captureApp(context, app, { screenshot = true } = {}) {
     httpStatus = resp ? resp.status() : null;
     finalUrl = page.url();
 
-    if (app.settle_ms) {
-      await page.waitForTimeout(app.settle_ms);
-    }
+    await smartSettle(page, app);
     if (app.wait_selector) {
       try {
         await page.waitForSelector(app.wait_selector, { timeout: app.timeout_ms ?? 30000 });
