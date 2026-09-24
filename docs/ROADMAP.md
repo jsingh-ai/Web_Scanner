@@ -80,3 +80,12 @@ Windows — before any logic is written.
 - [x] Refined status cards (status ring, pulse badge, meta chips, breakdown, screenshot lightbox)
 - [x] Settings slide-over drawer, toasts, skeleton loading, empty states
 - [x] Updated server smoke assertion for the new page title
+
+## Phase 9 — UX overhaul (app-shell + simpler settings)  ⬅ current
+
+- [x] Responsive app-shell: collapsible left sidebar + fluid grid (phone → ultrawide)
+- [x] Simplified add/edit form: Name · URL · Description · Plain/Rich toggle only
+- [x] `description` column (migration v2) + shown on cards; full edit of all fields incl. toggle
+- [x] Removed sections & advanced fields from UI; AI self-detects sections
+- [x] Auto-optimized loading: adaptive "settle until page stops changing" (`capture.js`)
+- [x] Mobile top bar + off-canvas sidebar; collapse state persisted

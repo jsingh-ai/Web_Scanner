@@ -29,6 +29,8 @@ export function buildSystemPrompt() {
     '',
     'status: good = app is up and showing data; warning = app loads but something looks',
     'off or you are unsure; down = app is broken, blank, erroring, or showing no data.',
+    'For a rich dashboard, identify the visible sections yourself from the screenshot',
+    '(use their on-screen headings) and report each one in the sections array.',
     'For a simple (non-dashboard) page, return empty sections and machines arrays.',
     'Only list machines worth noting (offline/error/standby); do not list healthy ones.',
   ].join('\n');
@@ -52,6 +54,7 @@ export function buildUserText(app = {}, signals = {}) {
 
   return [
     `Application: ${app.name || 'unknown'} (${app.url || ''}). This is ${kind}.`,
+    app.description ? `Context: ${app.description}` : '',
     sectionsLine,
     sig ? `Automated signals: ${sig}.` : '',
     'Judge the application health from the attached screenshot. Respond with JSON only.',

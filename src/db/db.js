@@ -79,6 +79,8 @@ const MIGRATIONS = [
 
   CREATE INDEX idx_machine_notes_check ON machine_notes(check_id);
   `,
+  // v2 — optional free-text description per app
+  `ALTER TABLE apps ADD COLUMN description TEXT;`,
 ];
 
 let db = null;

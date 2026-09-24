@@ -25,12 +25,14 @@ try {
   const app = apps.createApp({
     name: '  Test App  ',
     url: 'example.com',
+    description: 'Line 3 press timers',
     is_rich_dashboard: true,
     sections: ['Pinch', 'Lamination'],
   });
   assert(app.id > 0, 'app id assigned');
   assert(app.name === 'Test App', 'name trimmed');
   assert(app.url === 'https://example.com/', 'url normalized to https');
+  assert(app.description === 'Line 3 press timers', 'description stored');
   assert(app.is_rich_dashboard === true, 'boolean mapped');
   assert(app.sections.length === 2, 'sections parsed');
   assert(app.wait_strategy === 'load', 'default wait strategy is load');

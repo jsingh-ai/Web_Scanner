@@ -19,6 +19,7 @@ function toApp(row) {
     id: row.id,
     name: row.name,
     url: row.url,
+    description: row.description ?? null,
     enabled: !!row.enabled,
     is_rich_dashboard: !!row.is_rich_dashboard,
     sections: row.sections_json ? JSON.parse(row.sections_json) : [],
@@ -37,6 +38,9 @@ function normalizeInput(input, { partial = false } = {}) {
   const out = {};
   if (!partial || input.name !== undefined) out.name = requireName(input.name);
   if (!partial || input.url !== undefined) out.url = assertSafeUrl(input.url);
+  if (!partial || input.description !== undefined) {
+    out.description = input.description ? String(input.description).slice(0, 1000) : null;
+  }
   if (!partial || input.enabled !== undefined) {
     out.enabled = input.enabled === undefined ? 1 : input.enabled ? 1 : 0;
   }
@@ -76,10 +80,10 @@ export function createApp(input) {
   const info = db
     .prepare(
       `INSERT INTO apps
-         (name, url, enabled, is_rich_dashboard, sections_json,
+         (name, url, description, enabled, is_rich_dashboard, sections_json,
           wait_strategy, wait_selector, settle_ms, timeout_ms)
        VALUES
-         (@name, @url, @enabled, @is_rich_dashboard, @sections_json,
+         (@name, @url, @description, @enabled, @is_rich_dashboard, @sections_json,
           @wait_strategy, @wait_selector, @settle_ms, @timeout_ms)`,
     )
     .run(v);
