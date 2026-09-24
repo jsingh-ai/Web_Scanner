@@ -8,13 +8,20 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const SCAN_ENTRY = join(HERE, '..', 'scan.js');
+const DISCOVER_ENTRY = join(HERE, '..', 'discover.js');
+
+function spawnWorker(entry, args) {
+  const child = spawn(process.execPath, [entry, ...args], { detached: true, stdio: 'ignore' });
+  child.unref();
+  return child;
+}
 
 /** @param {'schedule'|'manual'|'catchup'} trigger */
 export function spawnScan(trigger = 'manual') {
-  const child = spawn(process.execPath, [SCAN_ENTRY, trigger], {
-    detached: true,
-    stdio: 'ignore',
-  });
-  child.unref();
-  return child;
+  return spawnWorker(SCAN_ENTRY, [trigger]);
+}
+
+/** Spawn the tab-discovery worker for an app. */
+export function spawnDiscover(appId) {
+  return spawnWorker(DISCOVER_ENTRY, [String(appId)]);
 }

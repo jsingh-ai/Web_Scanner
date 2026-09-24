@@ -24,6 +24,7 @@ delete process.env.OPENAI_API_KEY;
 const lock = await import('../src/scan/lock.js');
 const { getDb, closeDb } = await import('../src/db/db.js');
 const apps = await import('../src/db/apps.js');
+const viewsDb = await import('../src/db/views.js');
 const results = await import('../src/db/results.js');
 const { runScan } = await import('../src/scan/runner.js');
 const { pruneOldScreenshots } = await import('../src/storage/prune.js');
@@ -47,16 +48,25 @@ const url = `http://127.0.0.1:${port}/`;
 
 getDb();
 const app = apps.createApp({ name: 'Local Test', url, is_rich_dashboard: false, settle_ms: 0 });
+// A URL tab view (the local server answers any path).
+viewsDb.createView(app.id, { label: 'Reports', nav_type: 'url', target: `${url}reports` });
 
 const summary = await runScan('manual');
-assert(summary.total === 1, 'one app scanned');
-assert(summary.checked === 1, 'one check recorded');
-assert(summary.byStatus.good === 1, `expected good, got ${JSON.stringify(summary.byStatus)}`);
+assert(summary.total === 2, 'main + 1 tab scanned');
+assert(summary.checked === 2, 'two checks recorded');
+assert(summary.byStatus.good === 2, `expected 2 good, got ${JSON.stringify(summary.byStatus)}`);
 
 const history = results.getAppHistory(app.id);
-assert(history.length === 1, 'history has the check');
-const check = history[0];
-assert(check.status === 'good', 'recorded status good');
+assert(history.length === 2, 'history has main + tab checks');
+const mainCheck = results.getLatestCheck(app.id);
+assert(mainCheck && mainCheck.status === 'good', 'main check good');
+assert(mainCheck.view_id === null, 'main check has null view_id');
+
+const statuses = results.getLatestStatuses();
+assert(statuses[0].views.length === 1, 'status includes the tab view');
+assert(statuses[0].views[0].check.status === 'good', 'tab view is good');
+
+const check = mainCheck;
 assert(check.method === 'deterministic', 'simple page judged deterministically (no AI)');
 assert(check.screenshot_path && existsSync(resolveScreenshot(check.screenshot_path)), 'screenshot saved');
 

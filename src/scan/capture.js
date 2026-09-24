@@ -48,7 +48,7 @@ async function smartSettle(page, app) {
  * @param {object} [opts] - { screenshot = true }
  * @returns {Promise<object>} raw signals (see fields below)
  */
-export async function captureApp(context, app, { screenshot = true } = {}) {
+export async function captureApp(context, app, { screenshot = true, clickTarget = null } = {}) {
   const page = await context.newPage();
   const consoleErrors = [];
   const pageErrors = [];
@@ -77,6 +77,16 @@ export async function captureApp(context, app, { screenshot = true } = {}) {
         await page.waitForSelector(app.wait_selector, { timeout: app.timeout_ms ?? 30000 });
       } catch {
         selectorMissing = true;
+      }
+    }
+    // For a click-navigated tab: click the nav item by its label, then re-settle.
+    if (clickTarget) {
+      try {
+        await page.getByText(clickTarget, { exact: false }).first().click({ timeout: 5000 });
+        await smartSettle(page, app);
+        finalUrl = page.url();
+      } catch {
+        navError = navError || `tab navigation failed: could not open "${clickTarget}"`;
       }
     }
   } catch (e) {
