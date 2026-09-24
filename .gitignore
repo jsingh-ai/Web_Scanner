@@ -20,3 +20,6 @@ Desktop.ini
 .DS_Store
 .vscode/
 .idea/
+
+# Local preview/dev server config
+.claude/launch.json
