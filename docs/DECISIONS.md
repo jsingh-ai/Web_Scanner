@@ -140,3 +140,52 @@ the service log (captured by NSSM), not a separate store.
 would add a compile step with no place to run it comfortably. Serving everything
 locally (no CDN) also means teammate browsers on a restricted network don't need
 outbound internet to load the dashboard.
+
+---
+
+# Platform decisions (Phases 12+)
+
+These were decided in planning for the registry/governance platform. See
+[VISION.md](VISION.md) and [ROADMAP.md](ROADMAP.md).
+
+## 10. Hierarchy: Company → Category → Site (max 3 levels)
+
+Companies (Five Star, Polytex, Starpak, Superbag, …) at the top; user-defined
+categories inside each company; sites inside a category (with an "Unassigned" bucket).
+**Nesting stops at three levels** — deeper turns into an unmaintained filing cabinet;
+"Line 3 under Press Room" is a category naming convention, not another level.
+
+## 11. Shared catalog + personal layer (not per-user ownership of pages)
+
+Apps are added once org-wide and **scanned once** (no duplicate scans/history). Users
+get personal organization/views on top. Avoids the "same app added 5 times" waste.
+
+## 12. RBAC: per-company roles + a global superuser; separate Reviewer level
+
+Access is restricted per company (a user sees a company only via a role in it). Levels:
+Viewer, Contributor, Reviewer, Admin (per company) + global Superuser. **Reviewer is a
+distinct level** below Admin so approving doesn't require full admin power.
+
+## 13. Auth: local accounts over self-signed HTTPS (for now)
+
+Local username/password (hashed + sessions) was chosen over AD/SSO for speed. **This
+forces HTTPS** — local login over HTTP would send passwords in cleartext. A **CA cert
+is not required**: we generate a **self-signed** cert on-box (no IT dependency), which
+encrypts the wire; browsers show a one-time warning (optionally removed by importing
+the cert to the trust store). SSO/AD remains a later option. *(Flagged for the
+unbiased evaluation: local auth is a real security responsibility; reconsider vs AD.)*
+
+## 14. Build the full platform (vs buy)
+
+Decided to build one integrated product rather than assemble Uptime Kuma (uptime/
+alerts) + M365 Power Automate (workflow) + a catalog tool. Accepts re-implementing
+commodity pieces for a cohesive, sellable product. Unique moat = AI-visual dashboard
+judgment. See [VISION.md](VISION.md) → Build vs buy.
+
+## 15. Datastore: SQLite for now; PostgreSQL when we host multi-instance/external — OPEN
+
+Kept SQLite through the governance phases (sufficient for single-VM internal scale,
+no DB server to run). The trigger to move to Postgres is multiple app instances / HA
+or hosting for external customers. Keep `db/` as a thin data-access layer so a swap is
+contained. See [PROJECT-STATUS.md](PROJECT-STATUS.md) → SQLite vs PostgreSQL. *(Open
+for the evaluation to challenge.)*

@@ -90,7 +90,7 @@ Windows — before any logic is written.
 - [x] Auto-optimized loading: adaptive "settle until page stops changing" (`capture.js`)
 - [x] Mobile top bar + off-canvas sidebar; collapse state persisted
 
-## Phase 10 — Multi-tab monitoring + dashboard polish  ⬅ current
+## Phase 10 — Multi-tab monitoring + dashboard polish
 
 - [x] `views` model (migration v3): apps get tab views (URL or click); main is implicit (view_id NULL)
 - [x] Per-view scanning in the runner; per-view checks; discovery worker (`src/discover.js`)
@@ -99,7 +99,7 @@ Windows — before any logic is written.
 - [x] Card **screenshot thumbnails**, bigger KPIs, general visual polish
 - [x] CI: tab-views smoke + orchestration smoke extended to per-view scanning
 
-## Phase 11 — UX refinements & professional polish  ⬅ current
+## Phase 11 — UX refinements & professional polish
 
 - [x] "Site" terminology; cards drop the jargon (method/HTTP/confidence/filler summary)
 - [x] Edit a site from its card (edit icon → editor with Delete); removed the in-panel apps list
@@ -108,3 +108,72 @@ Windows — before any logic is written.
 - [x] Desktop-viewport screenshots (1920×1080, viewport-only) instead of tall full-page strips
 - [x] Zoom + pan in the screenshot viewer
 - [x] Redesigned overview into a refined stat row + a real page header (title, site count, last scan)
+
+---
+
+# Platform roadmap (Phases 12+) — registry + governance
+
+Phases 1–11 delivered the single-tenant **monitor**. Phases 12+ evolve it into the
+**registry + governance platform** (see [VISION.md](VISION.md)). Each phase ships
+something usable; the security-critical work (auth/RBAC) lands before the governance
+work that depends on it.
+
+## Roles model (decided)
+
+Roles are granted **per company**; one **global superuser** sits above all.
+
+| Level (per company) | Can |
+|---|---|
+| **Viewer** | See status/history for their companies |
+| **Contributor** | + submit new sites, edit/manage sites they own |
+| **Reviewer** | + review submissions, approve/reject, self-assign, mark live |
+| **Admin** | + manage users/roles, categories, all sites in that company |
+| **Superuser** (global) | Everything, all companies, cycle through anyone's view |
+
+Each site has an **owner + contact email**; once live it shows "reviewed by ___ ·
+owned by ___ (email)".
+
+## Phase 12 — Companies + categories + sidebar nav + history  ⬅ next
+
+- [ ] Company (top) → Category (custom, per-company) → Site hierarchy; one category per site; "Unassigned" bucket
+- [ ] User-managed companies & categories (add/rename/recolor/delete)
+- [ ] Sidebar becomes a navigator: collapsible Company → Category → Site tree with live status dots
+- [ ] Overview grouped by company/category; company/category picker in the site editor
+- [ ] Site detail + history view (status timeline, historical screenshots)
+- [ ] No auth (still LAN + write-token)
+
+## Phase 13a — Auth foundation
+
+- [ ] Users + local login (argon2/bcrypt hashes, server-side sessions, lockout)
+- [ ] Self-signed **HTTPS** (generated on-box; no CA/IT dependency; import to trust store optional)
+- [ ] Single global superuser
+- [ ] Replace the write-token with real sessions for mutations
+
+## Phase 13b — Roles + RBAC
+
+- [ ] Per-company memberships + the 4 role levels
+- [ ] RBAC filtering of every read (a user sees a company only if they have a role in it)
+- [ ] Admin UI for managing users/roles within a company
+
+## Phase 14 — Ownership
+
+- [ ] Site owner + contact email; "owned by / contact" on cards + detail
+- [ ] Ownership transfer
+
+## Phase 15 — Intake / approval workflow
+
+- [ ] Submit request → states: submitted → reviewing (assigned reviewer) → approved/live | rejected → retired
+- [ ] Reviewer assignment + "who's working on it"
+- [ ] Audit trail (who submitted/reviewed/changed, when)
+
+## Phase 16 — Notifications
+
+- [ ] In-app notifications first
+- [ ] Microsoft Teams (incoming webhook) + email (SMTP)
+- [ ] Triggers: review started, approved/live, site down
+
+## Cross-cutting (decide during 12–13)
+
+- [ ] Datastore: SQLite vs PostgreSQL (see PROJECT-STATUS.md analysis)
+- [ ] `better-sqlite3` repo bump + lockfile regen (Node 24 safety) — pending
+- [ ] Pin one Node version (VM on 24, project/CI on 22)

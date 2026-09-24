@@ -38,11 +38,17 @@ Two processes, decoupled on purpose:
 
 Full design and the reasoning behind every choice:
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the locked design.
+- [docs/VISION.md](docs/VISION.md) — what we're building and why (the product north-star).
+- [docs/PROJECT-STATUS.md](docs/PROJECT-STATUS.md) — what's built, the codebase map, deploy state, open questions.
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — the design (current + target platform).
 - [docs/DECISIONS.md](docs/DECISIONS.md) — why we chose each option (the trade-offs).
 - [docs/BUILD-RULES.md](docs/BUILD-RULES.md) — the rules all code must follow.
 - [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) — how to deploy on the VM.
-- [docs/ROADMAP.md](docs/ROADMAP.md) — the phased build plan and current status.
+- [docs/ROADMAP.md](docs/ROADMAP.md) — the phased build plan (monitor + platform).
+
+**Evaluating this project?** Start with [PROJECT-STATUS.md](docs/PROJECT-STATUS.md)
+(what's built + open questions), then [VISION.md](docs/VISION.md), then
+[ROADMAP.md](docs/ROADMAP.md) and [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## Quickstart (once code lands in later phases)
 

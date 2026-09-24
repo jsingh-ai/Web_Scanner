@@ -174,3 +174,80 @@ a Windows runner pinned to Node 22.16.x runs `npm install` (or `npm ci` once a
 lockfile is committed) + `npx playwright install chromium` + a smoke step that opens
 a SQLite DB and launches Chromium. Green check → safe to pull. See
 [.github/workflows/ci.yml](../.github/workflows/ci.yml).
+
+---
+
+# Target platform architecture (Phases 12+)
+
+The single-tenant monitor above becomes a multi-tenant **registry + governance
+platform**. This section sketches the target so it can be evaluated before building.
+See [VISION.md](VISION.md), [ROADMAP.md](ROADMAP.md), [DECISIONS.md](DECISIONS.md).
+
+## Data model (additive)
+
+```
+companies(id, name, sort_order, created_at)
+categories(id, company_id, name, color, sort_order, created_at)
+apps(... existing ..., category_id NULL)          -- site → category → company
+
+users(id, name, email, password_hash, is_superuser, created_at)
+memberships(id, user_id, company_id, role)         -- role: viewer|contributor|reviewer|admin
+sessions(id, user_id, expires_at, ...)             -- server-side sessions
+
+-- Ownership + workflow (Phases 14-15)
+apps(... owner_user_id NULL, contact_email NULL, lifecycle_state)
+   -- lifecycle_state: draft|submitted|reviewing|approved|live|rejected|retired
+submissions(id, app_id, submitted_by, reviewer_user_id, state, created_at, decided_at, note)
+audit_log(id, actor_user_id, action, entity, entity_id, detail, at)
+
+-- Notifications (Phase 16)
+notifications(id, user_id, kind, payload, read_at, created_at)
+notification_channels(company_id/user_id, type[teams|email], config)   -- webhook url / address
+```
+
+The **main view stays implicit** (checks with `view_id NULL`); tabs and scanning are
+unchanged — RBAC and workflow are layers on top of the existing scan/verdict data.
+
+## RBAC enforcement
+
+- Every **read** (status, history, screenshots, API) is filtered by the caller's
+  company memberships: a user sees a company only if they have a role in it; the
+  superuser sees all. Enforce this in a single **authorization layer** in `server.js`
+  (a `preHandler` that resolves the session → allowed company ids → scopes queries),
+  not scattered per-route, to avoid leaks.
+- **Writes** are gated by role: contributor (own sites), reviewer (approve),
+  admin (manage company), superuser (all). The current `write-token` is replaced by
+  session + role checks (Phase 13a).
+- Screenshots are access-controlled too (a served screenshot must belong to a site the
+  caller may see) — today they're static-served openly; this becomes an
+  authorization-checked route.
+
+## Auth + transport
+
+- Local accounts: argon2/bcrypt password hashes, server-side sessions (HttpOnly,
+  Secure, SameSite cookies), brute-force lockout.
+- **Self-signed HTTPS** generated on-box (no CA/IT dependency) so cookies can be
+  `Secure` and passwords aren't sent in cleartext. Swap in a real cert later if
+  available. The NSSM service serves HTTPS (or an HTTP→HTTPS redirect).
+
+## Workers unchanged
+
+The scan and discovery workers, scheduler, and browser-free server model all carry
+over. Scanning remains **once per shared site** regardless of how many users/companies
+view it — RBAC changes who *sees* results, not how often we scan.
+
+## Datastore
+
+SQLite (better-sqlite3) continues to back this through the governance phases; the move
+to PostgreSQL is triggered by multi-instance/HA or external hosting. Keep `db/` as a
+thin data-access layer so the swap stays contained. Full analysis:
+[PROJECT-STATUS.md](PROJECT-STATUS.md) → SQLite vs PostgreSQL.
+
+## Open risks to weigh (for the evaluation)
+
+- **Auth is a new, security-critical surface** — local auth done wrong is worse than
+  the current no-login LAN model. Consider AD/SSO seriously.
+- **RBAC leaks** are easy to introduce — centralize enforcement; test it hard.
+- **Scope/timeline** — this is 5+ phases; keep deploying the working monitor meanwhile.
+- **Screenshot authorization + retention** as history/tenancy grow.
+- **Node/DB drift** and the pending `better-sqlite3` bump.
