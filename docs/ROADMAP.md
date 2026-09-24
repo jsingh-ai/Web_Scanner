@@ -98,3 +98,13 @@ Windows — before any logic is written.
 - [x] One card per app with expandable tabs + overall status (worst-of); tab management in Settings
 - [x] Card **screenshot thumbnails**, bigger KPIs, general visual polish
 - [x] CI: tab-views smoke + orchestration smoke extended to per-view scanning
+
+## Phase 11 — UX refinements & professional polish  ⬅ current
+
+- [x] "Site" terminology; cards drop the jargon (method/HTTP/confidence/filler summary)
+- [x] Edit a site from its card (edit icon → editor with Delete); removed the in-panel apps list
+- [x] Sidebar: removed Refresh; "Settings" → "Add site"
+- [x] Write token remembered (hidden once saved; reappears only on auth failure)
+- [x] Desktop-viewport screenshots (1920×1080, viewport-only) instead of tall full-page strips
+- [x] Zoom + pan in the screenshot viewer
+- [x] Redesigned overview into a refined stat row + a real page header (title, site count, last scan)

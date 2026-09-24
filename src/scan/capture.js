@@ -114,7 +114,8 @@ export async function captureApp(context, app, { screenshot = true, clickTarget 
   let screenshotBuffer = null;
   if (screenshot) {
     try {
-      screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 72, fullPage: true });
+      // Viewport-only (not fullPage) → a clean desktop-screen capture.
+      screenshotBuffer = await page.screenshot({ type: 'jpeg', quality: 72, fullPage: false });
     } catch {
       // A screenshot failure shouldn't sink the whole check; the other signals stand.
     }
