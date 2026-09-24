@@ -13,7 +13,6 @@
   </head>
   <body>
     <div class="app" id="app" data-collapsed="false" data-mobilenav="closed">
-      <!-- Mobile top bar -->
       <div class="mobilebar">
         <button id="menuToggle" class="icon-btn" aria-label="Open menu">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
@@ -24,7 +23,6 @@
         </button>
       </div>
 
-      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="side-brand">
           <span class="brand-mark" aria-hidden="true">
@@ -44,13 +42,9 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z" stroke-linejoin="round"/></svg>
             <span class="lbl">Run now</span>
           </button>
-          <button id="refreshBtn" class="side-item" title="Refresh">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 4v5h-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-            <span class="lbl">Refresh</span>
-          </button>
-          <button id="settingsBtn" class="side-item" title="Settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
-            <span class="lbl">Settings</span>
+          <button id="addSiteBtn" class="side-item" title="Add a site">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+            <span class="lbl">Add site</span>
           </button>
         </nav>
 
@@ -70,33 +64,53 @@
         </div>
       </aside>
 
-      <!-- Main -->
       <main class="main">
+        <header class="page-header">
+          <div class="ph-left">
+            <h1 class="ph-title">Overview</h1>
+            <span class="ph-sub" id="pageSub">Loading…</span>
+          </div>
+          <button class="btn btn-primary ph-add" id="addSiteHeader">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>
+            Add site
+          </button>
+        </header>
+
         <section class="overview">
-          <div class="health-card">
+          <div class="stat health">
             <div class="gauge">
               <svg viewBox="0 0 120 120">
-                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surface-3)" stroke-width="12" />
-                <circle id="gaugeArc" cx="60" cy="60" r="52" fill="none" stroke="var(--ok)" stroke-width="12" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" style="transition: stroke-dashoffset .6s ease, stroke .3s ease" />
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--surface-3)" stroke-width="11" />
+                <circle id="gaugeArc" cx="60" cy="60" r="52" fill="none" stroke="var(--ok)" stroke-width="11" stroke-linecap="round" stroke-dasharray="327" stroke-dashoffset="327" style="transition: stroke-dashoffset .6s ease, stroke .3s ease" />
               </svg>
               <div class="gauge-center"><span id="gaugePct" class="gauge-pct">—</span><span class="gauge-label">Operational</span></div>
             </div>
             <div id="healthHeadline" class="health-headline">Loading…</div>
           </div>
-          <div class="kpis">
-            <div class="kpi total"><div class="kpi-top"><span class="kpi-label">Total apps</span><span class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span></div><span class="kpi-value" id="kpiTotal">—</span></div>
-            <div class="kpi ok"><div class="kpi-top"><span class="kpi-label">Operational</span><span class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><span class="kpi-value" id="kpiGood">—</span></div>
-            <div class="kpi warn"><div class="kpi-top"><span class="kpi-label">Warnings</span><span class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div><span class="kpi-value" id="kpiWarn">—</span></div>
-            <div class="kpi bad"><div class="kpi-top"><span class="kpi-label">Down</span><span class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6" stroke-linecap="round"/></svg></span></div><span class="kpi-value" id="kpiDown">—</span></div>
+          <div class="stat total">
+            <div class="stat-head"><span class="stat-label">Total sites</span><span class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></span></div>
+            <div class="stat-value" id="kpiTotal">—</div>
+          </div>
+          <div class="stat ok">
+            <div class="stat-head"><span class="stat-label">Operational</span><span class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="stat-value" id="kpiGood">—</div>
+          </div>
+          <div class="stat warn">
+            <div class="stat-head"><span class="stat-label">Warnings</span><span class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+            <div class="stat-value" id="kpiWarn">—</div>
+          </div>
+          <div class="stat bad">
+            <div class="stat-head"><span class="stat-label">Down</span><span class="stat-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6" stroke-linecap="round"/></svg></span></div>
+            <div class="stat-value" id="kpiDown">—</div>
           </div>
         </section>
 
         <div class="toolbar">
-          <h1>Monitored Applications</h1>
+          <h2>Monitored Sites</h2>
           <div class="tools-right">
             <div class="search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3" stroke-linecap="round"/></svg>
-              <input id="searchInput" type="search" placeholder="Search apps…" autocomplete="off" />
+              <input id="searchInput" type="search" placeholder="Search sites…" autocomplete="off" />
             </div>
             <div class="segmented" id="filterSeg" role="group" aria-label="Filter by status">
               <button class="seg" data-filter="all" aria-pressed="true">All <span class="count" id="segAll"></span></button>
@@ -113,15 +127,19 @@
 
     <div class="nav-scrim" id="navScrim"></div>
 
-    <!-- Settings drawer -->
+    <!-- Add / edit site drawer -->
     <div id="settingsOverlay" class="overlay hidden"></div>
     <aside id="settingsDrawer" class="drawer" aria-hidden="true">
       <div class="drawer-head">
-        <h2>Settings — Monitored Apps</h2>
+        <h2 id="drawerTitle">Add a site</h2>
         <button id="settingsClose" class="icon-btn ghost" aria-label="Close">✕</button>
       </div>
       <div class="drawer-body">
-        <div class="token-field field">
+        <div id="tokenSaved" class="token-saved hidden">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Write access unlocked · <button type="button" id="changeToken" class="linklike">change</button>
+        </div>
+        <div class="token-field field" id="tokenField">
           <label for="tokenInput">Write token <span class="hint">(required to add/edit/delete if the server is configured with one)</span></label>
           <input id="tokenInput" type="password" placeholder="paste write token" autocomplete="off" />
         </div>
@@ -143,18 +161,15 @@
           <div class="field">
             <label>Monitoring type</label>
             <div class="toggle-group" id="typeToggle" role="group" aria-label="Monitoring type">
-              <button type="button" class="toggle" data-rich="false" aria-pressed="true">
-                <strong>Plain</strong><small>Just check it loads (fast, free)</small>
-              </button>
-              <button type="button" class="toggle" data-rich="true" aria-pressed="false">
-                <strong>Rich dashboard</strong><small>AI reads it + section breakdown</small>
-              </button>
+              <button type="button" class="toggle" data-rich="false" aria-pressed="true"><strong>Plain</strong><small>Just check it loads (fast, free)</small></button>
+              <button type="button" class="toggle" data-rich="true" aria-pressed="false"><strong>Rich dashboard</strong><small>AI reads it + section breakdown</small></button>
             </div>
             <input type="hidden" id="isRich" value="false" />
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn btn-primary" id="saveBtn">Add app</button>
+            <button type="submit" class="btn btn-primary" id="saveBtn">Add site</button>
             <button type="button" class="btn" id="cancelEdit">Cancel</button>
+            <button type="button" class="btn btn-danger hidden" id="deleteSiteBtn">Delete</button>
             <span id="formMsg" class="form-msg"></span>
           </div>
         </form>
@@ -177,16 +192,19 @@
             <button type="button" class="btn" id="addTabBtn">Add</button>
           </div>
         </div>
-
-        <div class="list-title">Current apps</div>
-        <div class="apps-list" id="appsList"></div>
       </div>
     </aside>
 
-    <!-- Screenshot lightbox -->
+    <!-- Screenshot lightbox (zoom + pan) -->
     <div id="shotOverlay" class="lightbox hidden">
-      <button id="shotClose" class="icon-btn close" aria-label="Close">✕</button>
-      <img id="shotImg" alt="Screenshot" />
+      <div class="lb-tools">
+        <button id="lbOut" class="icon-btn ghost" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14" stroke-linecap="round"/></svg></button>
+        <button id="lbReset" class="btn" aria-label="Reset zoom">Fit</button>
+        <button id="lbIn" class="icon-btn ghost" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg></button>
+        <button id="shotClose" class="icon-btn ghost close" aria-label="Close">✕</button>
+      </div>
+      <div class="lb-stage" id="lbStage"><img id="shotImg" alt="Screenshot" draggable="false" /></div>
+      <div class="lb-hint">Scroll to zoom · drag to pan</div>
     </div>
 
     <div id="toasts" class="toasts" aria-live="polite"></div>

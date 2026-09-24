@@ -81,7 +81,8 @@ export async function checkOneApp(context, app, opts = {}) {
 
 /** Scan one target and record it. `view` is null for the main view. */
 async function runTarget(browser, batchId, app, view, summary) {
-  const context = await browser.newContext();
+  // Desktop viewport so screenshots look like a monitor, not a tall mobile strip.
+  const context = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
   try {
     let result;
     if (!view) {
