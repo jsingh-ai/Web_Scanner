@@ -81,6 +81,34 @@ const MIGRATIONS = [
   `,
   // v2 — optional free-text description per app
   `ALTER TABLE apps ADD COLUMN description TEXT;`,
+  // v3 — tab "views" per app (main view is implicit: checks with view_id NULL).
+  `
+  CREATE TABLE views (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_id     INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+    label      TEXT    NOT NULL,
+    nav_type   TEXT    NOT NULL DEFAULT 'url',   -- url | click
+    target     TEXT    NOT NULL,                 -- the URL, or the tab label to click
+    enabled    INTEGER NOT NULL DEFAULT 1,
+    created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now')),
+    deleted_at TEXT
+  );
+  CREATE INDEX idx_views_app ON views(app_id);
+
+  ALTER TABLE checks ADD COLUMN view_id INTEGER REFERENCES views(id) ON DELETE CASCADE;
+  CREATE INDEX idx_checks_view ON checks(view_id, created_at DESC, id DESC);
+
+  -- Candidates found by the discovery worker, awaiting the user's selection.
+  CREATE TABLE view_candidates (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    app_id     INTEGER NOT NULL REFERENCES apps(id) ON DELETE CASCADE,
+    label      TEXT    NOT NULL,
+    nav_type   TEXT    NOT NULL,
+    target     TEXT    NOT NULL,
+    created_at TEXT    NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
+  );
+  CREATE INDEX idx_view_candidates_app ON view_candidates(app_id);
+  `,
 ];
 
 let db = null;

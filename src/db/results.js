@@ -6,6 +6,7 @@
 
 import { getDb, nowIso } from './db.js';
 import { listApps } from './apps.js';
+import { listViews } from './views.js';
 
 const VALID_TRIGGERS = new Set(['schedule', 'manual', 'catchup']);
 
@@ -32,7 +33,7 @@ export function finishBatch(batchId) {
  * The full sections/machines breakdown is stored as verdict_json; machines are also
  * flattened into machine_notes for querying. Returns the new check id.
  */
-export function recordCheck(batchId, appId, verdict) {
+export function recordCheck(batchId, appId, verdict, viewId = null) {
   const db = getDb();
   const sections = verdict.sections || [];
   const machines = verdict.machines || [];
@@ -48,15 +49,16 @@ export function recordCheck(batchId, appId, verdict) {
     const info = db
       .prepare(
         `INSERT INTO checks
-           (batch_id, app_id, status, confidence, method, http_status,
+           (batch_id, app_id, view_id, status, confidence, method, http_status,
             load_ms, summary, verdict_json, screenshot_path)
          VALUES
-           (@batch_id, @app_id, @status, @confidence, @method, @http_status,
+           (@batch_id, @app_id, @view_id, @status, @confidence, @method, @http_status,
             @load_ms, @summary, @verdict_json, @screenshot_path)`,
       )
       .run({
         batch_id: batchId,
         app_id: appId,
+        view_id: viewId ?? null,
         status: verdict.status,
         confidence: verdict.confidence ?? null,
         method: verdict.method,
@@ -96,6 +98,7 @@ function toCheck(row) {
     http_status: row.http_status,
     load_ms: row.load_ms,
     summary: row.summary,
+    view_id: row.view_id ?? null,
     verdict: row.verdict_json ? JSON.parse(row.verdict_json) : null,
     screenshot_path: row.screenshot_path,
     screenshot_pruned: !!row.screenshot_pruned,
@@ -103,21 +106,41 @@ function toCheck(row) {
   };
 }
 
-/** The most recent check for an app, or null. */
+/** The most recent MAIN check for an app (view_id NULL), or null. */
 export function getLatestCheck(appId) {
   const db = getDb();
   return toCheck(
     db
       .prepare(
-        'SELECT * FROM checks WHERE app_id = ? ORDER BY created_at DESC, id DESC LIMIT 1',
+        'SELECT * FROM checks WHERE app_id = ? AND view_id IS NULL ORDER BY created_at DESC, id DESC LIMIT 1',
       )
       .get(appId),
   );
 }
 
-/** For every non-deleted app: the app plus its latest check (or null). */
+/** The most recent check for a specific tab view, or null. */
+export function getLatestCheckForView(viewId) {
+  const db = getDb();
+  return toCheck(
+    db
+      .prepare('SELECT * FROM checks WHERE view_id = ? ORDER BY created_at DESC, id DESC LIMIT 1')
+      .get(viewId),
+  );
+}
+
+/**
+ * For every non-deleted app: the app, its latest MAIN check, and each enabled tab
+ * view with its latest check. The card derives an overall status from all of these.
+ */
 export function getLatestStatuses() {
-  return listApps().map((app) => ({ app, check: getLatestCheck(app.id) }));
+  return listApps().map((app) => ({
+    app,
+    check: getLatestCheck(app.id),
+    views: listViews(app.id, { onlyEnabled: true }).map((view) => ({
+      view,
+      check: getLatestCheckForView(view.id),
+    })),
+  }));
 }
 
 /** Recent checks for one app, newest first. */

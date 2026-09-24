@@ -89,3 +89,12 @@ Windows — before any logic is written.
 - [x] Removed sections & advanced fields from UI; AI self-detects sections
 - [x] Auto-optimized loading: adaptive "settle until page stops changing" (`capture.js`)
 - [x] Mobile top bar + off-canvas sidebar; collapse state persisted
+
+## Phase 10 — Multi-tab monitoring + dashboard polish  ⬅ current
+
+- [x] `views` model (migration v3): apps get tab views (URL or click); main is implicit (view_id NULL)
+- [x] Per-view scanning in the runner; per-view checks; discovery worker (`src/discover.js`)
+- [x] "Scan/Rescan tabs" endpoints + candidates flow; view CRUD endpoints (SSRF-guarded)
+- [x] One card per app with expandable tabs + overall status (worst-of); tab management in Settings
+- [x] Card **screenshot thumbnails**, bigger KPIs, general visual polish
+- [x] CI: tab-views smoke + orchestration smoke extended to per-view scanning

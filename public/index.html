@@ -159,6 +159,25 @@
           </div>
         </form>
 
+        <div id="tabsPanel" class="tabs-panel hidden">
+          <div class="tabs-head">
+            <span class="list-title" id="tabsTitle">Tabs</span>
+            <button type="button" class="btn" id="scanTabsBtn">Scan tabs</button>
+          </div>
+          <div id="tabsScanMsg" class="form-msg"></div>
+          <div id="candidatesBox" class="candidates hidden">
+            <div class="hint">Found tabs — pick which to monitor:</div>
+            <div id="candidatesList" class="cand-list"></div>
+            <button type="button" class="btn btn-primary" id="addSelectedBtn">Add selected</button>
+          </div>
+          <div id="viewsList" class="views-list"></div>
+          <div class="manual-add">
+            <input id="tabLabel" placeholder="Tab name" />
+            <input id="tabUrl" placeholder="Tab URL (http://…)" />
+            <button type="button" class="btn" id="addTabBtn">Add</button>
+          </div>
+        </div>
+
         <div class="list-title">Current apps</div>
         <div class="apps-list" id="appsList"></div>
       </div>

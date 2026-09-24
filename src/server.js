@@ -18,11 +18,20 @@ import Fastify from 'fastify';
 import fastifyStatic from '@fastify/static';
 
 import { createApp, deleteApp, getApp, listApps, updateApp } from './db/apps.js';
+import {
+  clearCandidates,
+  createView,
+  deleteView,
+  getView,
+  listCandidates,
+  listViews,
+  updateView,
+} from './db/views.js';
 import { getAppHistory, getLatestStatuses } from './db/results.js';
 import { getDb } from './db/db.js';
 import { screenshotRoot } from './storage/screenshots.js';
 import { assertUrlAllowed } from './security/ssrf.js';
-import { spawnScan } from './scan/spawnScan.js';
+import { spawnDiscover, spawnScan } from './scan/spawnScan.js';
 import { startScheduler } from './scan/scheduler.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -79,6 +88,8 @@ export async function buildServer() {
     getAppHistory(Number(req.params.id), 50),
   );
   app.get('/api/config', async () => ({ writeTokenRequired: !!process.env.WRITE_TOKEN }));
+  app.get('/api/apps/:id/views', async (req) => listViews(Number(req.params.id)));
+  app.get('/api/apps/:id/candidates', async (req) => listCandidates(Number(req.params.id)));
 
   // --- mutations (token-guarded) ---
   app.post('/api/apps', { preHandler: requireToken }, async (req, reply) => {
@@ -96,6 +107,42 @@ export async function buildServer() {
 
   app.delete('/api/apps/:id', { preHandler: requireToken }, async (req, reply) => {
     if (!deleteApp(Number(req.params.id))) return reply.code(404).send({ error: 'not found' });
+    return { deleted: true };
+  });
+
+  // Trigger tab discovery (spawns the discovery worker; results appear via candidates).
+  app.post('/api/apps/:id/discover', { preHandler: requireToken }, async (req, reply) => {
+    const id = Number(req.params.id);
+    if (!getApp(id)) return reply.code(404).send({ error: 'not found' });
+    clearCandidates(id); // so polling sees fresh results, not the previous run's
+    spawnDiscover(id);
+    return reply.code(202).send({ started: true });
+  });
+
+  // Add one or more tab views to an app. Body: { views: [{label, nav_type, target}] }.
+  app.post('/api/apps/:id/views', { preHandler: requireToken }, async (req, reply) => {
+    const id = Number(req.params.id);
+    if (!getApp(id)) return reply.code(404).send({ error: 'not found' });
+    const items = (req.body && req.body.views) || [];
+    const created = [];
+    for (const v of items) {
+      if ((v.nav_type || 'url') === 'url') await assertUrlAllowed(v.target); // SSRF guard on URL tabs
+      created.push(createView(id, v));
+    }
+    return reply.code(201).send(created);
+  });
+
+  app.put('/api/views/:id', { preHandler: requireToken }, async (req, reply) => {
+    const body = req.body || {};
+    const view = getView(Number(req.params.id));
+    if (!view) return reply.code(404).send({ error: 'not found' });
+    const nav = body.nav_type || view.nav_type;
+    if (body.target !== undefined && nav === 'url') await assertUrlAllowed(body.target);
+    return updateView(Number(req.params.id), body);
+  });
+
+  app.delete('/api/views/:id', { preHandler: requireToken }, async (req, reply) => {
+    if (!deleteView(Number(req.params.id))) return reply.code(404).send({ error: 'not found' });
     return { deleted: true };
   });
 
